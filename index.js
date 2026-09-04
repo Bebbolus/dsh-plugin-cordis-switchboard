@@ -1,14 +1,14 @@
 /**
  * dsh-plugin-cordis-switchboard
- * Cordis Plugin per DeepSeek Harness (DSH)
- * Gestore Universale di Toggle per TUTTI i plugin e tool Cordis.
- * Supporta:
- * - Attivazione/Disattivazione a livello di SINGOLA SESSIONE (per-session state)
- * - Commutazione dinamica tra turni consecutivi nella stessa conversazione
- * - Ricerca libera (search) di plugin e tool per nome, descrizione e categoria
- * - Protezione dei plugin CORE (non disattivabili per garantire stabilità del kernel)
- * - Potatura deterministica (Dynamic Tool Pruning) con stima del risparmio di token
- * - Dashboard visuale HTML interattiva (.dsh/tasks/switchboard.html)
+ * Cordis Plugin for DeepSeek Harness (DSH)
+ * Universal Toggle Switchboard for ALL Cordis plugins and tools.
+ * Features:
+ * - Single-session state isolation (per-session state in .dsh/switches.json)
+ * - Dynamic hot-switching between consecutive conversation turns
+ * - Search tool across plugins and tools by name, description, and category
+ * - Core plugin protection (vital kernel components cannot be disabled)
+ * - Deterministic dynamic tool pruning with token savings estimation
+ * - Interactive HTML dashboard (.dsh/tasks/switchboard.html)
  */
 
 import { promises as fs } from 'fs';
@@ -18,7 +18,7 @@ const WORKSPACE_DIR = process.env.WORKSPACE_DIR || '/workspace';
 const SWITCHES_FILE = path.join(WORKSPACE_DIR, '.dsh', 'switches.json');
 const SWITCHBOARD_HTML = path.join(WORKSPACE_DIR, '.dsh', 'tasks', 'switchboard.html');
 
-// Plugin essenziali del microkernel Cordis / DSH (protetti: non possono essere disattivati)
+// Essential Cordis / DSH kernel plugins (protected: cannot be disabled)
 const CORE_PROTECTED_PLUGINS = new Set([
   'cordis',
   'cordis:include',
@@ -35,7 +35,7 @@ const CORE_PROTECTED_PLUGINS = new Set([
 ]);
 
 /**
- * Carica l'intero albero di configurazione da disco
+ * Loads configuration tree from disk
  */
 async function loadSwitchesData() {
   try {
@@ -60,19 +60,19 @@ async function loadSwitchesData() {
 }
 
 /**
- * Salva l'albero di configurazione su disco
+ * Saves configuration tree to disk
  */
 async function saveSwitchesData(data) {
   try {
     await fs.mkdir(path.dirname(SWITCHES_FILE), { recursive: true });
     await fs.writeFile(SWITCHES_FILE, JSON.stringify(data, null, 2), 'utf8');
   } catch (err) {
-    console.error(`[cordis-switchboard] Errore salvataggio switches.json: ${err.message}`);
+    console.error(`[cordis-switchboard] Error saving switches.json: ${err.message}`);
   }
 }
 
 /**
- * Risolve la configurazione effettiva per una data sessione
+ * Resolves effective configuration for a given session
  */
 function resolveSessionConfig(data, sessionId = 'default') {
   const sessionConfig = data.sessions[sessionId] || {
@@ -93,12 +93,12 @@ function resolveSessionConfig(data, sessionId = 'default') {
 }
 
 /**
- * Scansiona e restituisce il catalogo completo di TUTTI i plugin e tool Cordis rilevati
+ * Scans and returns catalog of ALL discovered Cordis plugins and tools
  */
 async function discoverAllCordisComponents(ctx, sessionConfig) {
   const items = new Map();
 
-  // 1. Introspezione entries di Cordis Loader (se disponibili)
+  // 1. Introspect Cordis Loader entries (if available)
   try {
     const loader = ctx.loader || (ctx.app && ctx.app.loader);
     if (loader && typeof loader.entries === 'function') {
@@ -110,7 +110,7 @@ async function discoverAllCordisComponents(ctx, sessionConfig) {
             name,
             type: 'plugin',
             category: isCore ? 'core' : (name.startsWith('dsh-plugin-') ? 'community_plugin' : 'system_plugin'),
-            description: `Plugin Cordis montato nel profilo runtime (${isCore ? 'Kernel Core' : 'Estensione Dinamica'})`,
+            description: `Cordis plugin mounted in runtime profile (${isCore ? 'Kernel Core' : 'Dynamic Extension'})`,
             is_core: isCore,
             token_weight: isCore ? 0 : 500,
             enabled: isCore ? true : !sessionConfig.disabled_plugins.has(name)
@@ -120,7 +120,7 @@ async function discoverAllCordisComponents(ctx, sessionConfig) {
     }
   } catch {}
 
-  // 2. Introspezione Tools registrati in ctx.tools
+  // 2. Introspect registered tools in ctx.tools
   try {
     const toolMap = ctx.tools?._tools || ctx.tools?.tools || {};
     if (typeof toolMap.forEach === 'function') {
@@ -132,7 +132,7 @@ async function discoverAllCordisComponents(ctx, sessionConfig) {
             name,
             type: 'tool',
             category: isCore ? 'core' : (name.includes('search') || name.includes('web') ? 'search' : 'agentic'),
-            description: tool.description || 'Tool operativo registrato in Cordis',
+            description: tool.description || 'Operational tool registered in Cordis',
             is_core: isCore,
             token_weight: 400,
             enabled: isCore ? true : !sessionConfig.disabled_tools.has(name)
@@ -148,7 +148,7 @@ async function discoverAllCordisComponents(ctx, sessionConfig) {
             name,
             type: 'tool',
             category: isCore ? 'core' : (name.includes('search') || name.includes('web') ? 'search' : 'agentic'),
-            description: (tool && tool.description) || 'Tool operativo registrato in Cordis',
+            description: (tool && tool.description) || 'Operational tool registered in Cordis',
             is_core: isCore,
             token_weight: 400,
             enabled: isCore ? true : !sessionConfig.disabled_tools.has(name)
@@ -158,19 +158,19 @@ async function discoverAllCordisComponents(ctx, sessionConfig) {
     }
   } catch {}
 
-  // 3. Catalogo di base e community packages (SearXNG, Agent-Reach, Architect, Sidebar, ecc.)
+  // 3. Catalog of known community and built-in packages
   const knownCommunityCatalog = [
-    { name: 'dsh-plugin-searxng', type: 'plugin', category: 'search', description: 'Meta-motore di ricerca OSINT privato SearXNG (Michael Bazzell)', token_weight: 600 },
-    { name: 'agent-reach', type: 'skill', category: 'community', description: 'OSINT Multi-Canale per YouTube, Social, Wayback Machine e Scraping', token_weight: 700 },
-    { name: 'dsh-plugin-the-architect', type: 'plugin', category: 'agentic', description: 'ICM Meta-Orchestrator, Triage Fable Loop e Zero-Token Handoff', token_weight: 1200 },
-    { name: 'dsh-plugin-plan-sidebar', type: 'plugin', category: 'agentic', description: 'Dashboard visuale interattiva di avanzamento task in tempo reale', token_weight: 400 },
-    { name: 'dsh-plugin-npm-guard', type: 'plugin', category: 'coding', description: 'Guardrail di sicurezza deterministico per audit pacchetti NPM', token_weight: 350 },
-    { name: 'docker_runner_exec', type: 'tool', category: 'coding', description: 'Compilazione ed esecuzione effimera on-demand (Go, Rust, Python, Expo)', token_weight: 800 },
-    { name: 'tool-web', type: 'tool', category: 'search', description: 'Client di navigazione e ricerca web standard di DeepSeek Harness', token_weight: 500 },
-    { name: 'tool-subagent', type: 'tool', category: 'agentic', description: 'Spawning e orchestrazione di sub-agenti isolati a zero token', token_weight: 700 },
-    { name: 'tool-goal', type: 'tool', category: 'agentic', description: 'Driver di avanzamento continuo per goal e milestone a lungo termine', token_weight: 500 },
-    { name: 'tool-ralph', type: 'tool', category: 'agentic', description: 'Sub-agent loop multi-round con budget fino a 64 iterazioni', token_weight: 650 },
-    { name: 'tool-todo', type: 'tool', category: 'agentic', description: 'Gestione parallela della lista task e todo di sessione', token_weight: 350 }
+    { name: 'dsh-plugin-searxng', type: 'plugin', category: 'search', description: 'Private OSINT meta-search engine SearXNG', token_weight: 600 },
+    { name: 'agent-reach', type: 'skill', category: 'community', description: 'Multi-channel OSINT for YouTube, Social Media, and Wayback Machine', token_weight: 700 },
+    { name: 'dsh-plugin-the-architect', type: 'plugin', category: 'agentic', description: 'ICM Meta-Orchestrator, Fable Loop Triage, and Zero-Token Handoff', token_weight: 1200 },
+    { name: 'dsh-plugin-plan-sidebar', type: 'plugin', category: 'agentic', description: 'Real-time interactive task progress visual dashboard', token_weight: 400 },
+    { name: 'dsh-plugin-npm-guard', type: 'plugin', category: 'coding', description: 'Deterministic security guardrail for NPM supply-chain audits', token_weight: 350 },
+    { name: 'docker_runner_exec', type: 'tool', category: 'coding', description: 'Ephemeral on-demand build and execution runners (Go, Rust, Python, Expo)', token_weight: 800 },
+    { name: 'tool-web', type: 'tool', category: 'search', description: 'Standard DeepSeek Harness web search and navigation client', token_weight: 500 },
+    { name: 'tool-subagent', type: 'tool', category: 'agentic', description: 'Zero-token isolated sub-agent spawning and orchestration', token_weight: 700 },
+    { name: 'tool-goal', type: 'tool', category: 'agentic', description: 'Continuous progress driver for long-term goals and milestones', token_weight: 500 },
+    { name: 'tool-ralph', type: 'tool', category: 'agentic', description: 'Multi-round sub-agent loop with budget up to 64 iterations', token_weight: 650 },
+    { name: 'tool-todo', type: 'tool', category: 'agentic', description: 'Parallel task list and session todo tracker', token_weight: 350 }
   ];
 
   for (const comp of knownCommunityCatalog) {
@@ -183,14 +183,14 @@ async function discoverAllCordisComponents(ctx, sessionConfig) {
     }
   }
 
-  // 4. Aggiungi componenti Core essenziali se non già mappati
+  // 4. Add core protected components if not already mapped
   for (const coreName of CORE_PROTECTED_PLUGINS) {
     if (!items.has(coreName)) {
       items.set(coreName, {
         name: coreName,
         type: 'core',
         category: 'core',
-        description: 'Componente essenziale del microkernel Cordis / DSH (Protetto)',
+        description: 'Essential Cordis / DSH microkernel component (Protected)',
         is_core: true,
         token_weight: 0,
         enabled: true
@@ -202,7 +202,7 @@ async function discoverAllCordisComponents(ctx, sessionConfig) {
 }
 
 /**
- * Genera la Dashboard HTML completa con Ricerca Live, Filtri e Toggles
+ * Renders standalone HTML Dashboard with live search, filters, and toggles
  */
 function renderSwitchboardHtml(items, providers, sessionId, tokensSaved) {
   const jsonCatalog = JSON.stringify(items);
@@ -433,7 +433,7 @@ export function apply(ctx) {
     parameters: {
       query: { type: 'string', required: true, description: 'Termine di ricerca (es: "searx", "reach", "osint", "bash", "architect")' },
       category: { type: 'string', required: false, description: 'Filtro opzionale per categoria: "all", "search", "community", "agentic", "coding", "core"' },
-      session_id: { type: 'string', required: false, description: 'Identificativo della sessione (default: "default")' }
+      session_id: { type: 'string', required: false, description: 'Session identifier (default: "default")' }
     },
     output: {
       schema: {
@@ -488,7 +488,7 @@ export function apply(ctx) {
       enabled: { type: 'boolean', required: false, description: 'true per attivare, false per disattivare (se omesso inverte lo stato attuale)' },
       provider_value: { type: 'string', required: false, description: 'Per target="web_search": "searxng", "default", o "disabled"' },
       scope: { type: 'string', required: false, description: '"session" (default, per la sessione corrente) o "global"' },
-      session_id: { type: 'string', required: false, description: 'Identificativo della sessione (default: "default")' }
+      session_id: { type: 'string', required: false, description: 'Session identifier (default: "default")' }
     },
     output: {
       schema: {
@@ -517,7 +517,7 @@ export function apply(ctx) {
           scope,
           session_id: sessionId,
           status: 'PROTECTED_CORE',
-          message: `Rifiutato: '${target}' è un componente CORE del microkernel Cordis / DSH e non può essere disattivato.`
+          message: `Rejected: '${target}' is a CORE Cordis / DSH component and cannot be disabled.`
         };
       }
 
@@ -541,7 +541,7 @@ export function apply(ctx) {
           scope,
           session_id: sessionId,
           status: val,
-          message: `Provider ricerca web commutato su '${val}' per ${scope === 'session' ? `la sessione ${sessionId}` : 'tutte le sessioni'}.`
+          message: `Web search provider switched to '${val}' for ${scope === 'session' ? `session ${sessionId}` : 'all sessions'}.`
         };
       }
 
@@ -582,7 +582,7 @@ export function apply(ctx) {
         scope,
         session_id: sessionId,
         status: shouldEnable ? 'ENABLED' : 'DISABLED',
-        message: `Componente '${target}' ${shouldEnable ? 'ABILITATO' : 'DISABILITATO'} con successo per ${scope === 'session' ? `la sessione ${sessionId}` : 'tutte le sessioni'}. Dynamic Tool Pruning attivo.`
+        message: `Component '${target}' successfully ${shouldEnable ? 'ENABLED' : 'DISABLED'} for ${scope === 'session' ? `session ${sessionId}` : 'all sessions'}. Dynamic Tool Pruning active.`
       };
     }
   });
@@ -592,9 +592,9 @@ export function apply(ctx) {
   // --------------------------------------------------------------------------
   ctx.tools.register({
     name: 'switchboard_status',
-    description: 'Visualizza lo stato completo di tutti i toggle, provider attivi e token risparmiati per la sessione corrente.',
+    description: 'Displays complete status of all toggles, active providers, and estimated tokens saved for current session.',
     parameters: {
-      session_id: { type: 'string', required: false, description: 'Identificativo della sessione (default: "default")' }
+      session_id: { type: 'string', required: false, description: 'Session identifier (default: "default")' }
     },
     output: {
       schema: {
@@ -640,9 +640,9 @@ export function apply(ctx) {
   // --------------------------------------------------------------------------
   ctx.tools.register({
     name: 'switchboard_render_ui',
-    description: 'Compila e aggiorna la dashboard HTML interattiva del Quadro Elettrico (.dsh/tasks/switchboard.html).',
+    description: 'Renders and updates the interactive HTML switchboard dashboard (.dsh/tasks/switchboard.html).',
     parameters: {
-      session_id: { type: 'string', required: false, description: 'Identificativo della sessione' }
+      session_id: { type: 'string', required: false, description: 'Session identifier' }
     },
     output: {
       schema: {
@@ -671,7 +671,7 @@ export function apply(ctx) {
       return {
         html_path: SWITCHBOARD_HTML,
         session_id: sessionId,
-        message: 'Dashboard interattiva Switchboard generata con successo. Apribile dai deliverable.'
+        message: 'Interactive Switchboard dashboard generated successfully. Available in deliverables.'
       };
     }
   });

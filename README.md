@@ -1,4 +1,8 @@
-# dsh-plugin-cordis-switchboard
+# dsh-plugin-cordis-switchboard 🎛️
+
+[![npm version](https://img.shields.io/npm/v/dsh-plugin-cordis-switchboard.svg)](https://www.npmjs.com/package/dsh-plugin-cordis-switchboard)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DSH Plugin Hub](https://img.shields.io/badge/DSH--Plugin-Control--Panel-purple.svg)](https://dsh-plugin.org)
 
 Universal Cordis Plugin & Tool Toggle Switchboard for **DeepSeek Harness (DSH)**.
 
@@ -6,26 +10,28 @@ Provides hot-switching of tool providers (e.g. SearXNG OSINT vs Default Web Sear
 
 ---
 
-## 🎛️ Caratteristiche Principali
+## 🌟 Key Features
 
-* **Introspezione Cordis Universale:** Scansiona a runtime `ctx.loader` e `ctx.tools` scoprendo dinamicamente tutti i plugin e gli strumenti caricati nell'ecosistema, inclusi tool community, server MCP e plugin nativi.
-* **Commutazione Turn-by-Turn Per-Session:** Permette all'utente o all'agente di variare la composizione degli strumenti tra turni di conversazione consecutivi (es. Turno 1 con ricerca OSINT approfondita via SearXNG, Turno 2 con ricerca web standard o tool pruning restrittivo), salvando lo stato in `.dsh/switches.json`.
-* **Protezione Kernel Core (`CORE_PROTECTED_PLUGINS`):** Protegge i componenti infrastrutturali critici (`tool-bash`, `tool-fs`, `tool-str-replace-editor`, `connection`) evitando disattivazioni accidentali.
-* **Integrazione Nativia nella Sidebar:** Quando installato insieme a `dsh-plugin-plan-sidebar`, si monta automaticamente come tab dedicato nel dock laterale con barra di ricerca in tempo reale e switch animati.
+* **Universal Cordis Introspection:** Scans `ctx.loader` and `ctx.tools` at runtime to dynamically discover all plugins and tools in the ecosystem, including community tools, MCP servers, and system plugins.
+* **Per-Session & Turn-by-Turn Switching:** Enables switching capabilities between consecutive conversation turns (e.g., Turn 1 with in-depth SearXNG OSINT, Turn 2 with standard web search or aggressive tool pruning), persisting state to `.dsh/switches.json`.
+* **Kernel Core Protection (`CORE_PROTECTED_PLUGINS`):** Safeguards critical infrastructure components (`tool-bash`, `tool-fs`, `tool-str-replace-editor`, `connection`) against accidental deactivation.
+* **Dynamic Tool Pruning & Token Savings:** Prunes deactivated tool definitions from LLM request payloads, saving hundreds of context tokens per turn.
+* **Native Sidebar Integration:** When paired with `dsh-plugin-plan-sidebar`, mounts automatically as a dedicated tab inside the right-dock workbench with live search and reactive switches.
 
 ---
 
-## 📦 Installazione in DeepSeek Harness
+## 📦 Installation in DeepSeek Harness
 
-Esegui dal terminale di DSH:
+Run from your DSH environment:
 
 ```bash
 dsh plugin --profile web add dsh-plugin-cordis-switchboard
 ```
 
-DSH riconosce automaticamente la dichiarazione `dsh.bundle.patch` in `package.json`, inserisce il bundle in `dsh.profile.bundles` del profilo web e applica il patch layer.
+DSH automatically discovers the `dsh.bundle.patch` declaration in `package.json`, registers the bundle in `dsh.profile.bundles`, and mounts the runtime.
 
-Oppure tramite configurazione manuale in `cordis.patch.yml`:
+Or configure manually in `cordis.patch.yml`:
+
 ```yaml
 - insert:
     - id: cordis-switchboard
@@ -34,29 +40,31 @@ Oppure tramite configurazione manuale in `cordis.patch.yml`:
 
 ---
 
-## 🛠️ Tool Esposti per LLM & Agenti
+## 🛠️ Exposed Tools for LLMs & Agents
 
-1. `switchboard_status`: Restituisce lo stato globale di tutti i plugin e toggle attivi per la sessione.
-2. `switchboard_toggle`: Commuta istantaneamente un plugin o un provider (es. `searchProvider: 'searxng'` <-> `'default'`).
-3. `switchboard_search`: Cerca fra tutti i tool e plugin per nome, categoria o descrizione.
+1. `switchboard_status`: Returns global status of all plugins, active providers, and estimated token savings for the session.
+2. `switchboard_toggle`: Instantly switches a plugin, tool, or provider route (e.g., `web_search: 'searxng'` <-> `'default'`).
+3. `switchboard_search`: Searches across all tools and plugins by name, category, or description.
+4. `switchboard_render_ui`: Renders an interactive standalone HTML dashboard (`.dsh/tasks/switchboard.html`).
 
 ---
 
-## 🌐 Pubblicazione su dsh-plugin.org & npm
+## 🚀 Publishing to dsh-plugin.org & npm
 
-1. **Tag e Release su GitHub:**
+1. **Tag and Release on GitHub:**
    ```bash
    git tag v1.0.0
    git push origin v1.0.0
    ```
-2. **Pubblicazione npm:**
+2. **Publish to npm:**
    ```bash
    npm publish --access public
    ```
-3. **Indicizzazione:**
-   Il marketplace `https://dsh-plugin.org` rileva automaticamente i pacchetti npm aventi la keyword `dsh-plugin` e il manifest `dsh.bundle`.
+3. **Registry Discovery:**
+   `https://dsh-plugin.org` automatically indexes packages carrying the `dsh-plugin` keyword and the `dsh.bundle` manifest.
 
 ---
 
-## Licenza
+## 📄 License
+
 MIT © Bebbolus
