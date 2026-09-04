@@ -1,0 +1,3 @@
+- insert:
+    - id: cordis-switchboard
+      name: dsh-plugin-cordis-switchboard
