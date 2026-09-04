@@ -230,7 +230,7 @@ function renderSwitchboardHtml(items, providers, sessionId, tokensSaved) {
       </div>
       <div class="flex items-center space-x-2">
         <span class="text-xs px-2.5 py-1 rounded-full bg-blue-950 text-blue-300 border border-blue-800/60 font-mono">
-          Sessione: <strong class="text-white">${sessionId}</strong>
+          Session: <strong class="text-white">${sessionId}</strong>
         </span>
         <span id="token-badge" class="text-xs px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800/60 font-mono">
           -${tokensSaved} Token Pruned
@@ -238,72 +238,72 @@ function renderSwitchboardHtml(items, providers, sessionId, tokensSaved) {
       </div>
     </div>
 
-    <!-- Sezione Provider Ricerca Web -->
+    <!-- Web Search Provider Section -->
     <div class="mb-5 p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
       <div class="flex items-center justify-between mb-2.5">
         <div class="flex items-center space-x-2">
           <span class="text-sm">🌐</span>
-          <h2 class="text-xs font-semibold text-slate-200">Commutatore Provider Ricerca Web</h2>
+          <h2 class="text-xs font-semibold text-slate-200">Web Search Provider Switchboard</h2>
         </div>
-        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-mono">Scelta Dinamica per Turno</span>
+        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-mono">Per-Turn Dynamic Selection</span>
       </div>
       <div class="grid grid-cols-3 gap-2 text-xs">
         <button onclick="setWebProvider('searxng')" id="btn-prov-searxng"
           class="py-2 px-3 rounded-lg font-medium border text-center transition-all ${providers.web_search === 'searxng' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/30' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'}">
-          🔍 SearXNG (OSINT Privato)
+          🔍 SearXNG (Private OSINT)
         </button>
         <button onclick="setWebProvider('default')" id="btn-prov-default"
           class="py-2 px-3 rounded-lg font-medium border text-center transition-all ${providers.web_search === 'default' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/30' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'}">
-          🌍 Ricerca Classica (Default)
+          🌍 Classic Search (Default)
         </button>
         <button onclick="setWebProvider('disabled')" id="btn-prov-disabled"
           class="py-2 px-3 rounded-lg font-medium border text-center transition-all ${providers.web_search === 'disabled' ? 'bg-rose-900 border-rose-700 text-rose-100 shadow-lg shadow-rose-900/30' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'}">
-          🚫 Disattivato (Offline)
+          🚫 Disabled (Offline)
         </button>
       </div>
       <p class="text-[11px] text-slate-400 mt-2 italic">
-        💡 Esempio pratico: Se SearXNG restituisce risultati insoddisfacenti, commuta su <strong>Ricerca Classica</strong> per la richiesta successiva senza dover riavviare DSH.
+        💡 Practical tip: If SearXNG returns suboptimal results, switch to <strong>Classic Search</strong> for subsequent queries without restarting DSH.
       </p>
     </div>
 
-    <!-- Barra di Ricerca e Filtri Categoria -->
+    <!-- Search Bar and Category Filters -->
     <div class="space-y-2.5 mb-4">
       <div class="relative">
-        <input type="text" id="search-input" placeholder="🔍 Cerca plugin, tool o capacità (es: searx, reach, code, bash)..."
+        <input type="text" id="search-input" placeholder="🔍 Search plugins, tools, or capabilities (e.g., searx, reach, code, bash)..."
           oninput="applyFilters()"
           class="w-full bg-slate-950/90 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
       </div>
 
-      <!-- Filtri rapidi -->
+      <!-- Quick filters -->
       <div class="flex flex-wrap gap-1.5 text-[11px]">
-        <button onclick="setCategoryFilter('all')" class="cat-pill px-2.5 py-1 rounded-md bg-blue-600 text-white font-medium" data-cat="all">Tutti</button>
+        <button onclick="setCategoryFilter('all')" class="cat-pill px-2.5 py-1 rounded-md bg-blue-600 text-white font-medium" data-cat="all">All</button>
         <button onclick="setCategoryFilter('search')" class="cat-pill px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:text-white font-medium" data-cat="search">Search & OSINT</button>
         <button onclick="setCategoryFilter('community')" class="cat-pill px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:text-white font-medium" data-cat="community">Community / Skills</button>
         <button onclick="setCategoryFilter('agentic')" class="cat-pill px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:text-white font-medium" data-cat="agentic">Agentic & Planning</button>
         <button onclick="setCategoryFilter('coding')" class="cat-pill px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:text-white font-medium" data-cat="coding">Software Factory</button>
-        <button onclick="setCategoryFilter('core')" class="cat-pill px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:text-white font-medium" data-cat="core">Core (Protetti)</button>
+        <button onclick="setCategoryFilter('core')" class="cat-pill px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:text-white font-medium" data-cat="core">Core (Protected)</button>
       </div>
     </div>
 
-    <!-- Lista Componenti Introspezionati -->
+    <!-- Introspected Components List -->
     <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-950/40">
       <div class="px-3.5 py-2 bg-slate-800/40 border-b border-slate-800 text-[11px] font-semibold text-slate-400 flex justify-between">
-        <span id="count-label">Componenti rilevati: ${items.length}</span>
-        <span>Stato per: ${sessionId}</span>
+        <span id="count-label">Detected components: ${items.length}</span>
+        <span>Status for: ${sessionId}</span>
       </div>
       <div id="items-container" class="divide-y divide-slate-800/60 max-h-80 overflow-y-auto p-1">
-        <!-- Render dinamico via JavaScript -->
+        <!-- Dynamic render via JavaScript -->
       </div>
     </div>
 
-    <!-- Footer Informativo -->
+    <!-- Information Footer -->
     <div class="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
       <div class="flex items-center space-x-2">
         <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Modifiche persistite in <code>.dsh/switches.json</code></span>
+        <span>Changes persisted in <code>.dsh/switches.json</code></span>
       </div>
       <div class="text-[10px] font-mono text-slate-400">
-        Comando: <code>/switchboard toggle &lt;nome&gt;</code>
+        Command: <code>/switchboard toggle &lt;name&gt;</code>
       </div>
     </div>
 
@@ -325,10 +325,10 @@ function renderSwitchboardHtml(items, providers, sessionId, tokensSaved) {
         return matchesCat && matchesQuery;
       });
 
-      document.getElementById('count-label').textContent = 'Visualizzati: ' + filtered.length + ' di ' + catalog.length;
+      document.getElementById('count-label').textContent = 'Showing: ' + filtered.length + ' of ' + catalog.length;
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div class="p-6 text-center text-xs text-slate-500">Nessun plugin o tool corrispondente alla ricerca.</div>';
+        container.innerHTML = '<div class="p-6 text-center text-xs text-slate-500">No plugins or tools match your search.</div>';
         return;
       }
 
@@ -343,7 +343,7 @@ function renderSwitchboardHtml(items, providers, sessionId, tokensSaved) {
               <div class="flex items-center space-x-2">
                 <span class="text-xs font-mono font-semibold text-slate-200">\${item.name}</span>
                 <span class="text-[9px] px-1.5 py-0.2 rounded border \${badgeColor} font-mono">
-                  \${isCore ? 'CORE (PROTETTO)' : (item.enabled ? 'ATTIVO' : 'DISATTIVATO')}
+                  \${isCore ? 'CORE (PROTECTED)' : (item.enabled ? 'ACTIVE' : 'DISABLED')}
                 </span>
                 \${!isCore ? \`<span class="text-[9px] text-slate-500 font-mono">-\${item.token_weight} tok</span>\` : ''}
               </div>
@@ -425,14 +425,14 @@ export function apply(ctx) {
   if (!ctx.tools || typeof ctx.tools.register !== 'function') return;
 
   // --------------------------------------------------------------------------
-  // TOOL 1: switchboard_search (Ricerca universale di Plugin e Tool)
+  // TOOL 1: switchboard_search (Universal Plugin and Tool Discovery)
   // --------------------------------------------------------------------------
   ctx.tools.register({
     name: 'switchboard_search',
-    description: 'Cerca tra TUTTI i plugin e tool Cordis disponibili (community, OSINT, search, agentic, core) per nome, descrizione o categoria.',
+    description: 'Searches across ALL available Cordis plugins and tools (community, OSINT, search, agentic, core) by name, description, or category.',
     parameters: {
-      query: { type: 'string', required: true, description: 'Termine di ricerca (es: "searx", "reach", "osint", "bash", "architect")' },
-      category: { type: 'string', required: false, description: 'Filtro opzionale per categoria: "all", "search", "community", "agentic", "coding", "core"' },
+      query: { type: 'string', required: true, description: 'Search term (e.g. "searx", "reach", "osint", "bash", "architect")' },
+      category: { type: 'string', required: false, description: 'Optional category filter: "all", "search", "community", "agentic", "coding", "core"' },
       session_id: { type: 'string', required: false, description: 'Session identifier (default: "default")' }
     },
     output: {
@@ -478,16 +478,16 @@ export function apply(ctx) {
   });
 
   // --------------------------------------------------------------------------
-  // TOOL 2: switchboard_toggle (Attivazione/Disattivazione per-sessione)
+  // TOOL 2: switchboard_toggle (Per-session Activation/Deactivation)
   // --------------------------------------------------------------------------
   ctx.tools.register({
     name: 'switchboard_toggle',
-    description: 'Attiva o disattiva un plugin o tool per la sessione corrente (o globalmente), o commuta il provider di ricerca web (searxng vs default).',
+    description: 'Enables or disables a plugin or tool for the current session (or globally), or toggles the web search provider (searxng vs default).',
     parameters: {
-      target_name: { type: 'string', required: true, description: 'Nome esatto del plugin/tool/provider (es: "dsh-plugin-searxng", "agent-reach", "docker_runner_exec", "web_search")' },
-      enabled: { type: 'boolean', required: false, description: 'true per attivare, false per disattivare (se omesso inverte lo stato attuale)' },
-      provider_value: { type: 'string', required: false, description: 'Per target="web_search": "searxng", "default", o "disabled"' },
-      scope: { type: 'string', required: false, description: '"session" (default, per la sessione corrente) o "global"' },
+      target_name: { type: 'string', required: true, description: 'Exact name of plugin/tool/provider (e.g. "dsh-plugin-searxng", "agent-reach", "docker_runner_exec", "web_search")' },
+      enabled: { type: 'boolean', required: false, description: 'true to enable, false to disable (if omitted, inverts current state)' },
+      provider_value: { type: 'string', required: false, description: 'For target="web_search": "searxng", "default", or "disabled"' },
+      scope: { type: 'string', required: false, description: '"session" (default, for current session) or "global"' },
       session_id: { type: 'string', required: false, description: 'Session identifier (default: "default")' }
     },
     output: {
@@ -523,7 +523,7 @@ export function apply(ctx) {
 
       const data = await loadSwitchesData();
 
-      // 2. Gestione Commutatore Provider Ricerca Web (SearXNG vs Default)
+      // 2. Web Search Provider Switcher Handling (SearXNG vs Default)
       if (target === 'web_search' || target === 'search_provider') {
         const val = args.provider_value || (args.enabled === false ? 'default' : 'searxng');
         if (scope === 'session') {
@@ -545,7 +545,7 @@ export function apply(ctx) {
         };
       }
 
-      // 3. Gestione Toggle Plugin / Tool generico
+      // 3. Generic Plugin / Tool Toggle Handling
       const targetConfig = scope === 'session' ?
         (data.sessions[sessionId] = data.sessions[sessionId] || { disabled_plugins: [], disabled_tools: [], providers: {} }) :
         data.global;
@@ -553,16 +553,16 @@ export function apply(ctx) {
       targetConfig.disabled_plugins = targetConfig.disabled_plugins || [];
       targetConfig.disabled_tools = targetConfig.disabled_tools || [];
 
-      // Determina lo stato target
+      // Determine target state
       const isCurrentlyDisabled = targetConfig.disabled_plugins.includes(target) || targetConfig.disabled_tools.includes(target);
       const shouldEnable = args.enabled !== undefined ? args.enabled : isCurrentlyDisabled;
 
       if (shouldEnable) {
-        // Abilita rimuovendo dalle liste di esclusione
+        // Enable by removing from exclusion lists
         targetConfig.disabled_plugins = targetConfig.disabled_plugins.filter(p => p !== target);
         targetConfig.disabled_tools = targetConfig.disabled_tools.filter(t => t !== target);
       } else {
-        // Disabilita inserendo nella lista
+        // Disable by adding to exclusion list
         if (target.startsWith('tool-') || target === 'docker_runner_exec') {
           if (!targetConfig.disabled_tools.includes(target)) targetConfig.disabled_tools.push(target);
         } else {
