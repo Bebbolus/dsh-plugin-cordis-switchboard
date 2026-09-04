@@ -1,0 +1,17 @@
+{
+  "name": "dsh-plugin-cordis-switchboard",
+  "version": "1.0.0",
+  "description": "Universal Cordis Plugin & Tool Toggle Switchboard for DeepSeek Harness (DSH)",
+  "main": "index.js",
+  "type": "module",
+  "keywords": [
+    "dsh-plugin",
+    "cordis",
+    "switchboard",
+    "dynamic-tool-pruning",
+    "toggle-manager",
+    "ui"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}
