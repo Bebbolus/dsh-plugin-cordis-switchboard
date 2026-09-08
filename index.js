@@ -18,6 +18,11 @@ const WORKSPACE_DIR = process.env.WORKSPACE_DIR || '/workspace';
 const SWITCHES_FILE = path.join(WORKSPACE_DIR, '.dsh', 'switches.json');
 const SWITCHBOARD_HTML = path.join(WORKSPACE_DIR, '.dsh', 'tasks', 'switchboard.html');
 
+function formatOutputContent(_args, value) {
+  const text = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+  return [{ type: 'text', text }];
+}
+
 // Essential Cordis / DSH kernel plugins (protected: cannot be disabled)
 const CORE_PROTECTED_PLUGINS = new Set([
   'cordis',
@@ -444,7 +449,7 @@ export function apply(ctx) {
           results: { type: 'array' }
         }
       },
-      render: (v) => JSON.stringify(v, null, 2)
+      render: formatOutputContent
     },
     execute: async (args) => {
       const data = await loadSwitchesData();
@@ -502,7 +507,7 @@ export function apply(ctx) {
           message: { type: 'string' }
         }
       },
-      render: (v) => JSON.stringify(v, null, 2)
+      render: formatOutputContent
     },
     execute: async (args) => {
       const target = args.target_name.trim();
@@ -608,7 +613,7 @@ export function apply(ctx) {
           components: { type: 'array' }
         }
       },
-      render: (v) => JSON.stringify(v, null, 2)
+      render: formatOutputContent
     },
     execute: async (args) => {
       const data = await loadSwitchesData();
@@ -652,7 +657,7 @@ export function apply(ctx) {
           session_id: { type: 'string' }
         }
       },
-      render: (v) => JSON.stringify(v, null, 2)
+      render: formatOutputContent
     },
     execute: async (args) => {
       const data = await loadSwitchesData();
